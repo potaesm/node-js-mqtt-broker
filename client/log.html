@@ -10,7 +10,7 @@
         MQTTconnect();
         function MQTTconnect() {
             console.log('Connecting to the broker');
-            client = new Paho.MQTT.Client(HOST, 80, 'testClient');
+            client = new Paho.MQTT.Client(HOST, 443, 'testClient');
             client.onConnectionLost = onConnectionLost;
             client.onMessageArrived = onMessageArrived;
             client.connect({
