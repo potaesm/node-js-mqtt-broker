@@ -1,5 +1,5 @@
 const mqtt = require('mqtt')
-const client = mqtt.connect('ws://node-js-mqtt-broker.herokuapp.com')
+const client = mqtt.connect('wss://node-js-mqtt-broker.herokuapp.com')
 
 client.on('connect', function () {
     client.subscribe('test/greeting', function (err) {

@@ -14,6 +14,7 @@
             client.onConnectionLost = onConnectionLost;
             client.onMessageArrived = onMessageArrived;
             client.connect({
+                useSSL: true,
                 timeout: 5,
                 onSuccess: onConnect,
                 onFailure: onFailure
@@ -72,11 +73,15 @@
 
 <body style='margin:0 0 8px 0; background-color: #f5f5f5;'>
     <div style='padding: 15px; margin-bottom: 5px; background-color:#333333;'>
-        <span style='color: #ffffff; margin-left: 1rem;'>Topic: <input style='border: 0px; border-radius: 3px; outline:none;' type='text' id='topic'></span>
-        <button type='button' onclick='onSubmitTopic()' style='border: 0px; border-radius: 3px; margin-left: 0.5rem; outline:none;'>Subscribe</button>
+        <span style='color: #ffffff; margin-left: 1rem;'>Topic: <input
+                style='border: 0px; border-radius: 3px; outline:none;' type='text' id='topic'></span>
+        <button type='button' onclick='onSubmitTopic()'
+            style='border: 0px; border-radius: 3px; margin-left: 0.5rem; outline:none;'>Subscribe</button>
         <button type='button' onclick='onClear()' style='border: 0px; border-radius: 3px; outline:none;'>Clear</button>
-        <button type='button' onclick='onDisconnect()' style='border: 0px; border-radius: 3px; outline:none;'>Disconnect</button>
-        <button type='button' onclick='onReconnect()' style='border: 0px; border-radius: 3px; outline:none;'>Reconnect</button>
+        <button type='button' onclick='onDisconnect()'
+            style='border: 0px; border-radius: 3px; outline:none;'>Disconnect</button>
+        <button type='button' onclick='onReconnect()'
+            style='border: 0px; border-radius: 3px; outline:none;'>Reconnect</button>
     </div>
     <div id='log'></div>
 </body>
