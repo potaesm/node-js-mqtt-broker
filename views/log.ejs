@@ -1,1 +1,93 @@
-<!DOCTYPE html> <html> <head> <script src='https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js' type='text/javascript'></script> <script type='text/javascript' language='javascript'> const HOST = location.origin.replace(/^https?:\/\//, '').replace(/:[0-9]+/, ''); const PORT = <%= useSSL %> ? 443 : <%= configPort %>; const reconnectTimeout = 10; let globalTopic = '<%= clientName %>/greeting'; let client; MQTTconnect(); function MQTTconnect() { console.log('Connecting to the broker'); client = new Paho.MQTT.Client(HOST, PORT, '<%= clientName %>'); client.onConnectionLost = onConnectionLost; client.onMessageArrived = onMessageArrived; client.connect({ useSSL: <%= useSSL %>, timeout: 5, userName: '<%= userName %>', password: '<%= password %>', onSuccess: onConnect, onFailure: onFailure }); } function onFailure() { console.log('Connection attempt to the broker failed'); setTimeout(MQTTconnect, reconnectTimeout); } function onConnect() { console.log('Connected to the broker'); client.subscribe(globalTopic); const message = new Paho.MQTT.Message('{ "message": "Hello from <%= clientName %>" }'); message.destinationName = globalTopic; client.send(message); } function onConnectionLost(responseObject) { if (responseObject.errorCode !== 0) { console.log('Connection lost with error: ' + responseObject.errorMessage); } } function onMessageArrived(message) { if (message.destinationName === globalTopic) { console.log(message.destinationName + ': "' + message.payloadString + '"'); const p = document.createElement('p'); const t = document.createTextNode(message.destinationName + ': ' + message.payloadString); p.appendChild(t) const div = document.createElement('div'); div.style.border = '2px solid #bcbcbc'; div.style.backgroundColor = '#eeeeee'; div.style.borderRadius = '8px'; div.style.padding = '0 20px'; div.style.margin = '5px'; div.appendChild(p); document.getElementById('log').appendChild(div); } } function onSubmitTopic() { const topic = document.getElementById('topic').value; globalTopic = String(topic); onDisconnect(); MQTTconnect(); } function onClear() { document.getElementById('log').innerHTML = ''; } function onDisconnect() { console.log('Disconnected from the broker'); client.disconnect(); } function onReconnect() { MQTTconnect(); } </script> </head> <body style='margin:0 0 8px 0; background-color: #f5f5f5;'> <div style='padding: 15px; margin-bottom: 5px; background-color:#333333;'> <span style='color: #ffffff; margin-left: 1rem;'>Topic: <input style='border: 0px; border-radius: 3px; outline:none;' type='text' id='topic'></span> <button type='button' onclick='onSubmitTopic()' style='border: 0px; border-radius: 3px; margin-left: 0.5rem; outline:none;'>Subscribe</button> <button type='button' onclick='onClear()' style='border: 0px; border-radius: 3px; outline:none;'>Clear</button> <button type='button' onclick='onDisconnect()' style='border: 0px; border-radius: 3px; outline:none;'>Disconnect</button> <button type='button' onclick='onReconnect()' style='border: 0px; border-radius: 3px; outline:none;'>Reconnect</button> </div> <div id='log'></div> </body> </html>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js' type='text/javascript'></script>
+    <script type='text/javascript' language='javascript'>
+        const HOST = location.origin.replace(/^https?:\/\//, '').replace(/:[0-9]+/, '');
+        const PORT = <%= useSSL %> ? 443 : <%= configPort %>;
+        const reconnectTimeout = 10;
+        let globalTopic = '<%= clientName %>/greeting';
+        let client;
+        MQTTconnect();
+        function MQTTconnect() {
+            console.log('Connecting to the broker');
+            client = new Paho.MQTT.Client(HOST, PORT, '<%= clientName %>');
+            client.onConnectionLost = onConnectionLost;
+            client.onMessageArrived = onMessageArrived;
+            client.connect({
+                useSSL: <%= useSSL %>,
+                timeout: 5,
+                userName: '<%= userName %>',
+                password: '<%= password %>',
+                onSuccess: onConnect,
+                onFailure: onFailure
+            });
+        }
+        function onFailure() {
+            console.log('Connection attempt to the broker failed');
+            setTimeout(MQTTconnect, reconnectTimeout);
+        }
+        function onConnect() {
+            console.log('Connected to the broker');
+            client.subscribe(globalTopic);
+            const message = new Paho.MQTT.Message('{ "message": "Hello from <%= clientName %>" }');
+            message.destinationName = globalTopic;
+            client.send(message);
+        }
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log('Connection lost with error: ' + responseObject.errorMessage);
+            }
+        }
+        function onMessageArrived(message) {
+            if (message.destinationName === globalTopic) {
+                console.log(message.destinationName + ': "' + message.payloadString + '"');
+                const p = document.createElement('p');
+                const t = document.createTextNode(message.destinationName + ': ' + message.payloadString);
+                p.appendChild(t)
+                const div = document.createElement('div');
+                div.style.border = '2px solid #bcbcbc';
+                div.style.backgroundColor = '#eeeeee';
+                div.style.borderRadius = '8px';
+                div.style.padding = '0 20px';
+                div.style.margin = '5px';
+                div.appendChild(p);
+                document.getElementById('log').appendChild(div);
+            }
+        }
+        function onSubmitTopic() {
+            const topic = document.getElementById('topic').value;
+            globalTopic = String(topic);
+            onDisconnect();
+            MQTTconnect();
+        }
+        function onClear() {
+            document.getElementById('log').innerHTML = '';
+        }
+        function onDisconnect() {
+            console.log('Disconnected from the broker');
+            client.disconnect();
+        }
+        function onReconnect() {
+            MQTTconnect();
+        }
+    </script>
+</head>
+
+<body style='margin:0 0 8px 0; background-color: #f5f5f5;'>
+    <div style='padding: 15px; margin-bottom: 5px; background-color:#333333;'>
+        <span style='color: #ffffff; margin-left: 1rem;'>Topic: <input
+                style='border: 0px; border-radius: 3px; outline:none;' type='text' id='topic'></span>
+        <button type='button' onclick='onSubmitTopic()'
+            style='border: 0px; border-radius: 3px; margin-left: 0.5rem; outline:none;'>Subscribe</button>
+        <button type='button' onclick='onClear()' style='border: 0px; border-radius: 3px; outline:none;'>Clear</button>
+        <button type='button' onclick='onDisconnect()'
+            style='border: 0px; border-radius: 3px; outline:none;'>Disconnect</button>
+        <button type='button' onclick='onReconnect()'
+            style='border: 0px; border-radius: 3px; outline:none;'>Reconnect</button>
+    </div>
+    <div id='log'></div>
+</body>
+
+</html>
