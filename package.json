@@ -21,6 +21,8 @@
     "aedes": "^0.43.0",
     "aedes-persistence-mongodb": "^8.1.2",
     "cluster": "^0.7.7",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.5",
     "express": "^4.17.1",
     "mqemitter-mongodb": "^7.0.4",
     "mqtt": "^4.2.1",

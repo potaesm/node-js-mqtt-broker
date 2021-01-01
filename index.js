@@ -1,4 +1,6 @@
 const express = require('express');
+const cors = require('cors');
+const { auth, getId } = require('./auth');
 const ws = require('websocket-stream');
 const cluster = require('cluster');
 const mqemitter = require('mqemitter-mongodb');
@@ -6,8 +8,10 @@ const mongoPersistence = require('aedes-persistence-mongodb');
 
 const MONGO_URL = 'mongodb+srv://suthinan:musitmani@instance-0.wclpq.gcp.mongodb.net/broker?retryWrites=true&w=majority';
 
-const PORT = process.env.npm_package_config_port || require('./package.json').config.port;
-const INDEX = './client/log.html';
+const configPort = require('./package.json').config.port;
+const PORT = process.env.npm_package_config_port || configPort;
+
+const users = require('./user');
 
 function startAedes() {
 
@@ -23,7 +27,16 @@ function startAedes() {
                 packets: 300, // Number of seconds
                 subscriptions: 300
             }
-        })
+        }),
+        authenticate: (client, username, password, callback) => {
+            const usernameArray = users.map(user => user.username);
+            const passwordArray = users.map(user => user.password);
+            if (usernameArray.includes(username) && password.toString() === passwordArray[usernameArray.indexOf(username)]) {
+                callback(null, true);
+            } else {
+                callback(null, false);
+            }
+        },
     });
 
     // Http
@@ -33,10 +46,20 @@ function startAedes() {
     // });
 
     // WebSocket
-    const server = express().use((request, response) => response.sendFile(INDEX, { root: __dirname })).listen(PORT, () => {
-        console.log(`Listening on ${PORT}`);
-        aedes.publish({ topic: 'aedes/greeting', payload: `Hello, I am broker ${aedes.id}` });
-    });
+    const server = express()
+        .use(cors({ origin: true }))
+        .use(auth)
+        // .use((request, response) => response.sendFile('./client/log.html', { root: __dirname }))
+        .set('view engine', 'ejs')
+        .get('/log', (request, response) => {
+            const id = getId(request);
+            const ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+            response.render('log', { clientName: ip, userName: id.username, password: id.password, configPort, useSSL: !(configPort === PORT) })
+        })
+        .listen(PORT, () => {
+            console.log(`Listening on ${PORT}`);
+            aedes.publish({ topic: 'aedes/greeting', payload: `Hello, I am broker ${aedes.id}` });
+        });
     ws.createServer({ server }, aedes.handle);
 
     aedes.on('subscribe', function (subscriptions, client) {
