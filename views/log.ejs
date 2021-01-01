@@ -44,7 +44,7 @@
             if (message.destinationName === globalTopic) {
                 console.log(message.destinationName + ': "' + message.payloadString + '"');
                 const p = document.createElement('p');
-                const t = document.createTextNode(message.destinationName + ': "' + message.payloadString + '"');
+                const t = document.createTextNode(message.destinationName + ': ' + message.payloadString);
                 p.appendChild(t)
                 const div = document.createElement('div');
                 div.style.border = '2px solid #bcbcbc';
