@@ -31,7 +31,7 @@
         function onConnect() {
             console.log('Connected to the broker');
             client.subscribe(globalTopic);
-            const message = new Paho.MQTT.Message('Hello from test client');
+            const message = new Paho.MQTT.Message('{ "message": "Hello from <%= clientName %>" }');
             message.destinationName = globalTopic;
             client.send(message);
         }

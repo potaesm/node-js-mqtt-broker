@@ -49,7 +49,6 @@ function startAedes() {
     const server = express()
         .use(cors({ origin: true }))
         .use(auth)
-        // .use((request, response) => response.sendFile('./client/log.html', { root: __dirname }))
         .set('view engine', 'ejs')
         .get('/log', (request, response) => {
             const id = getId(request);
@@ -58,7 +57,7 @@ function startAedes() {
         })
         .listen(PORT, () => {
             console.log(`Listening on ${PORT}`);
-            aedes.publish({ topic: 'aedes/greeting', payload: `Hello, I am broker ${aedes.id}` });
+            aedes.publish({ topic: 'aedes/greeting', payload: `{ "message": "Hello, I am broker ${aedes.id}" }` });
         });
     ws.createServer({ server }, aedes.handle);
 
