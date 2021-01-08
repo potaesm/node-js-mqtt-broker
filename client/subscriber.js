@@ -1,5 +1,17 @@
+const fs = require('fs-extra');
 const mqtt = require('mqtt')
-const client = mqtt.connect('wss://web:client@node-js-mqtt-broker.herokuapp.com:443')
+const url = 'wss://node-js-mqtt-broker.herokuapp.com';
+const options = {
+    wsOptions: {
+        port: 443
+    },
+    username: 'web',
+    password: 'client',
+    properties: {
+        maximumPacketSize: 5242880
+    }
+}
+const client = mqtt.connect(url, options)
 
 client.on('connect', function () {
     client.subscribe('test/greeting', function (err) {
@@ -10,6 +22,10 @@ client.on('connect', function () {
 })
 
 client.on('message', function (topic, message) {
-    console.log('Got message: ', message.toString(), ' from topic ', topic)
+    const payload = JSON.parse(message.toString());
+    if (!!payload.fileName && !!payload.data) {
+        fs.writeFileSync('sub-' + payload.fileName, Buffer.from(payload.data, 'base64'));
+    }
+    console.log('Got message: ', payload, ' from topic ', topic)
     // client.end()
 });
