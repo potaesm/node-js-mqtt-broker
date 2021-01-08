@@ -12,8 +12,11 @@ const client = mqtt.connect(url, options)
 
 function getBase64FromFile(fileName) {
     const data = fs.readFileSync(fileName);
+    const file = fileName.split('.');
+    const fileExtension = file[file.length - 1];
     const payload = {
         fileName,
+        mimeType: 'image/' + fileExtension,
         data: data.toString('base64')
     }
     return JSON.stringify(payload);
@@ -30,4 +33,4 @@ client.on('connect', function () {
 setInterval(() => {
     const message = getBase64FromFile('me.jpeg');
     client.publish('test/greeting', message);
-}, 1000);
+}, 500);
