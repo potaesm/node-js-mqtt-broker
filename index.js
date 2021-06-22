@@ -8,7 +8,8 @@ const mongoPersistence = require('aedes-persistence-mongodb');
 
 const MONGO_URL = 'mongodb+srv://suthinan:musitmani@instance-0.wclpq.gcp.mongodb.net/broker?retryWrites=true&w=majority';
 
-const PORT = process.env.PORT || 3000;
+const configPort = 3000;
+const PORT = process.env.PORT || configPort;
 
 const users = require('./user');
 
