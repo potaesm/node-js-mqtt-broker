@@ -50,7 +50,7 @@ function startAedes() {
         .use(cors({ origin: true }))
         .use(auth)
         .set('view engine', 'ejs')
-        .get('/log', (request, response) => {
+        .get('', (request, response) => {
             const id = getId(request);
             const ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
             response.render('log', { clientName: ip, userName: id.username, password: id.password, configPort, useSSL: !(configPort === PORT) })
