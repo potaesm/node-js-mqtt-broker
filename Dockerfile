@@ -11,6 +11,7 @@ COPY index.js .
 COPY auth.js .
 COPY user.js .
 COPY views ./views
+COPY dist ./dist
 COPY heroku-node.sh .
 RUN ["chmod", "+x", "heroku-node.sh"]
 

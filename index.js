@@ -49,12 +49,13 @@ function startAedes() {
     const server = express()
         .use(cors({ origin: true }))
         .use(auth)
-        .set('view engine', 'ejs')
-        .get('', (request, response) => {
-            const id = getId(request);
-            const ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
-            response.render('log', { clientName: ip, userName: id.username, password: id.password, configPort, useSSL: !(configPort === PORT) })
-        })
+        .use(express.static(__dirname + '/dist'))
+        // .set('view engine', 'ejs')
+        // .get('', (request, response) => {
+        //     const id = getId(request);
+        //     const ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+        //     response.render('log', { clientName: ip, userName: id.username, password: id.password, configPort, useSSL: !(configPort === PORT) })
+        // })
         .listen(PORT, () => {
             console.log(`Listening on ${PORT}`);
             aedes.publish({ topic: 'aedes/greeting', payload: `{ "message": "Hello, I am broker ${aedes.id}" }` });
