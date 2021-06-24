@@ -88,7 +88,8 @@ function startAedes() {
 }
 
 if (cluster.isMaster) {
-    const numWorkers = require('os').cpus().length;
+    const numCores = require('os').cpus().length;
+    const numWorkers = numCores > 25 ? 25 : numCores;
     for (let i = 0; i < numWorkers; i++) {
         cluster.fork();
     }

@@ -1,10 +1,10 @@
 const fs = require('fs-extra');
 const mqtt = require('mqtt')
-const url = 'wss://node-js-mqtt-broker.herokuapp.com';
+const url = 'wss://c6349f3ac0ae.up.railway.app/';
 const options = {
-    wsOptions: {
-        port: 443
-    },
+    // wsOptions: {
+    //     port: 443
+    // },
     username: 'web',
     password: 'client',
     properties: {
