@@ -1,2 +1,5 @@
-websocketserver = 'broker.mqttdashboard.com';
-websocketport = 8000;
+websocketserver = 'mqtt.up.railway.app/';
+websocketport = 80;
+userName = 'web';
+password = 'client';
+useSSL = true;
