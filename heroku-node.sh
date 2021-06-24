@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ ! "$WEB_MEMORY" = "" ]; then
   if [ $WEB_MEMORY -le 512 ]; then

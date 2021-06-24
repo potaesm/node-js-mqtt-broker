@@ -1,6 +1,6 @@
 FROM node:14.5.0-alpine3.12
-
 ARG PORT
+ARG WEB_MEMORY
 
 WORKDIR /app
 
@@ -16,4 +16,4 @@ RUN ["chmod", "+x", "heroku-node.sh"]
 
 EXPOSE ${PORT}
 
-CMD node index.js
+CMD ["./heroku-node.sh", "index.js"]
