@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const mqtt = require('mqtt')
-const url = 'wss://c6349f3ac0ae.up.railway.app/';
+const url = 'wss://0fdb9034d237.up.railway.app';
 const options = {
     // wsOptions: {
     //     port: 443
