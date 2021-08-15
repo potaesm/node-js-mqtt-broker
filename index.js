@@ -13,10 +13,23 @@ const PORT = process.env.PORT || configPort;
 
 const users = require('./user');
 
-function startAedes() {
+function __generateObjectId() {
+    const os = require('os');
+    const crypto = require('crypto');
+    const secondInHex = Math.floor(new Date() / 1000).toString(16);
+    const machineId = crypto.createHash('md5').update(os.hostname()).digest('hex').slice(0, 6);
+    const processId = process.pid.toString(16).slice(0, 4).padStart(4, '0');
+    const counter = process.hrtime()[1].toString(16).slice(0, 6).padStart(6, '0');
+    return secondInHex + machineId + processId + counter;
+}
 
+function startAedes() {
+    let brokerId = 'BROKER_' + __generateObjectId();
+    if (!!cluster.worker && !!cluster.worker.id) {
+        brokerId = 'BROKER_' + cluster.worker.id;
+    }
     const aedes = require('aedes')({
-        id: 'BROKER_' + cluster.worker.id,
+        id: brokerId,
         mq: mqemitter({
             url: MONGO_URL
         }),
@@ -84,26 +97,28 @@ function startAedes() {
 
     // fired when a message is published
     aedes.on('publish', async function (packet, client) {
-        console.log('Client \x1b[31m' + (client ? client.id : 'BROKER_' + aedes.id) + '\x1b[0m has published', packet.payload.toString(), 'on', packet.topic, 'to broker', aedes.id);
+        console.log('Client \x1b[31m' + (client ? client.id : aedes.id) + '\x1b[0m has published', packet.payload.toString(), 'on', packet.topic, 'to broker', aedes.id);
     })
 }
 
-if (cluster.isMaster) {
-    const numCores = require('os').cpus().length;
-    const numWorkers = numCores > 25 ? 25 : numCores;
-    for (let i = 0; i < numWorkers; i++) {
-        cluster.fork();
-    }
+// if (cluster.isMaster) {
+//     const numCores = require('os').cpus().length;
+//     const numWorkers = numCores > 25 ? 25 : numCores;
+//     for (let i = 0; i < numWorkers; i++) {
+//         cluster.fork();
+//     }
 
-    cluster.on('online', function (worker) {
-        console.log('Worker ' + worker.process.pid + ' is online');
-    })
+//     cluster.on('online', function (worker) {
+//         console.log('Worker ' + worker.process.pid + ' is online');
+//     })
 
-    cluster.on('exit', function (worker, code, signal) {
-        console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
-        console.log('Starting a new worker');
-        cluster.fork();
-    })
-} else {
-    startAedes();
-}
+//     cluster.on('exit', function (worker, code, signal) {
+//         console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
+//         console.log('Starting a new worker');
+//         cluster.fork();
+//     })
+// } else {
+//     startAedes();
+// }
+
+startAedes();
