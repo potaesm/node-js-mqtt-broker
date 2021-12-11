@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
-const mqtt = require('mqtt')
-const url = 'wss://45ce94b7b5f0.up.railway.app';
+const mqtt = require('mqtt');
+const url = 'wss://mqtt.up.railway.app';
 const options = {
     // wsOptions: {
     //     port: 443
@@ -10,8 +10,8 @@ const options = {
     properties: {
         maximumPacketSize: 5242880
     }
-}
-const client = mqtt.connect(url, options)
+};
+const client = mqtt.connect(url, options);
 
 client.on('connect', function () {
     client.subscribe('test/greeting', function (err) {
@@ -19,13 +19,13 @@ client.on('connect', function () {
             client.publish('test/greeting', '{ "message": "Hello from subscriber" }');
         }
     })
-})
+});
 
 client.on('message', function (topic, message) {
     const payload = JSON.parse(message.toString());
     if (!!payload.fileName && !!payload.data) {
         fs.writeFileSync('sub-' + payload.fileName, Buffer.from(payload.data, 'base64'));
     }
-    console.log('Got message: ', payload, ' from topic ', topic)
-    // client.end()
+    console.log('Got message: ', payload, ' from topic ', topic);
+    // client.end();
 });
