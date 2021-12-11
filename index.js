@@ -106,26 +106,26 @@ function startAedes() {
 }
 
 /** Clustering */
-if (cluster.isMaster) {
-    const numCores = require('os').cpus().length;
-    /** Limit number of workers to 25 */
-    const numWorkers = numCores > 25 ? 25 : numCores;
-    for (let i = 0; i < numWorkers; i++) {
-        cluster.fork();
-    }
+// if (cluster.isMaster) {
+//     const numCores = require('os').cpus().length;
+//     /** Limit number of workers to 25 */
+//     const numWorkers = numCores > 25 ? 25 : numCores;
+//     for (let i = 0; i < numWorkers; i++) {
+//         cluster.fork();
+//     }
 
-    cluster.on('online', function (worker) {
-        console.log('Worker ' + worker.process.pid + ' is online');
-    })
+//     cluster.on('online', function (worker) {
+//         console.log('Worker ' + worker.process.pid + ' is online');
+//     })
 
-    cluster.on('exit', function (worker, code, signal) {
-        console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
-        console.log('Starting a new worker');
-        cluster.fork();
-    })
-} else {
-    startAedes();
-}
+//     cluster.on('exit', function (worker, code, signal) {
+//         console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
+//         console.log('Starting a new worker');
+//         cluster.fork();
+//     })
+// } else {
+//     startAedes();
+// }
 
 /** Non-clustering */
-// startAedes();
+startAedes();
