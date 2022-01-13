@@ -1,36 +1,57 @@
 const fs = require('fs-extra');
-const mqtt = require('mqtt')
-const url = 'wss://node-js-mqtt-broker.herokuapp.com';
-const options = {
-    wsOptions: {
-        port: 443
-    },
-    username: 'web',
-    password: 'client'
-}
-const client = mqtt.connect(url, options)
-
-function getBase64FromFile(fileName) {
-    const data = fs.readFileSync(fileName);
-    const file = fileName.split('.');
-    const fileExtension = file[file.length - 1];
-    const payload = {
-        fileName,
-        mimeType: 'image/' + fileExtension,
-        data: data.toString('base64')
+const mqtt = require('mqtt');
+const cloudamqp = {
+    url: 'mqtt://woodpecker.rmq.cloudamqp.com',
+    options: {
+        username: 'dahrusvc:dahrusvc',
+        password: '6lYM_XMYbBTM-rfU3vg4Qsdfmx8J1TlA'
     }
-    return JSON.stringify(payload);
-}
+};
+const heroku = {
+    url: 'ws://node-js-mqtt-broker.herokuapp.com',
+    options: {
+        // wsOptions: { port: 443 },
+        username: 'web',
+        password: 'client'
+    }
+};
+const railway = {
+    url: 'wss://mqtt.up.railway.app',
+    options: {
+        username: 'web',
+        password: 'client'
+    }
+};
+
+const topic = 'main/update';
+
+const client = mqtt.connect(railway.url, railway.options)
 
 client.on('connect', function () {
-    client.subscribe('test/greeting', function (err) {
+    client.subscribe(topic, function (err) {
         if (!err) {
-            client.publish('test/greeting', '{ "message": "Hello from publisher" }');
+            const updateObject = {
+                update: true,
+                url: 'http://node-js-storage.herokuapp.com/download-file/NodeMqttWsUpdate.ino.nodemcu.bin'
+            };
+            client.publish(topic, JSON.stringify(updateObject));
         }
     });
 });
 
-setInterval(() => {
-    const message = getBase64FromFile('me.jpeg');
-    client.publish('test/greeting', message);
-}, 500);
+// function getBase64FromFile(fileName) {
+//     const data = fs.readFileSync(fileName);
+//     const file = fileName.split('.');
+//     const fileExtension = file[file.length - 1];
+//     const payload = {
+//         fileName,
+//         mimeType: 'image/' + fileExtension,
+//         data: data.toString('base64')
+//     }
+//     return JSON.stringify(payload);
+// }
+
+// setInterval(() => {
+//     const message = getBase64FromFile('me.jpeg');
+//     client.publish(topic, message);
+// }, 500);

@@ -1,22 +1,36 @@
 const fs = require('fs-extra');
 const mqtt = require('mqtt');
-const url = 'wss://mqtt.up.railway.app';
-const options = {
-    // wsOptions: {
-    //     port: 443
-    // },
-    username: 'web',
-    password: 'client',
-    properties: {
-        maximumPacketSize: 5242880
+const cloudamqp = {
+    url: 'mqtt://woodpecker.rmq.cloudamqp.com',
+    options: {
+        username: 'dahrusvc:dahrusvc',
+        password: '6lYM_XMYbBTM-rfU3vg4Qsdfmx8J1TlA'
     }
 };
-const client = mqtt.connect(url, options);
+const heroku = {
+    url: 'ws://node-js-mqtt-broker.herokuapp.com',
+    options: {
+        // wsOptions: { port: 443 },
+        username: 'web',
+        password: 'client'
+    }
+};
+const railway = {
+    url: 'wss://mqtt.up.railway.app',
+    options: {
+        username: 'web',
+        password: 'client'
+    }
+};
+
+const topic = 'main/update';
+
+const client = mqtt.connect(heroku.url, heroku.options);
 
 client.on('connect', function () {
-    client.subscribe('test/greeting', function (err) {
+    client.subscribe(topic, function (err) {
         if (!err) {
-            client.publish('test/greeting', '{ "message": "Hello from subscriber" }');
+            client.publish(topic, JSON.stringify({ message: 'Hello from subscriber!' }));
         }
     })
 });
