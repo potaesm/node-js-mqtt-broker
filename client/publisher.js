@@ -32,7 +32,7 @@ client.on('connect', function () {
         if (!err) {
             const updateObject = {
                 update: true,
-                url: 'http://node-js-storage.herokuapp.com/download-file/NodeMqttWsUpdate.ino.nodemcu.bin'
+                url: 'http://node-js-storage.herokuapp.com/download-file/V105.bin'
             };
             client.publish(topic, JSON.stringify(updateObject));
         }

@@ -25,7 +25,7 @@ const railway = {
 
 const topic = 'main/update';
 
-const client = mqtt.connect(heroku.url, heroku.options);
+const client = mqtt.connect(railway.url, railway.options);
 
 client.on('connect', function () {
     client.subscribe(topic, function (err) {
@@ -36,10 +36,10 @@ client.on('connect', function () {
 });
 
 client.on('message', function (topic, message) {
-    const payload = JSON.parse(message.toString());
-    if (!!payload.fileName && !!payload.data) {
-        fs.writeFileSync('sub-' + payload.fileName, Buffer.from(payload.data, 'base64'));
-    }
-    console.log('Got message: ', payload, ' from topic ', topic);
+    // const payload = JSON.parse(message.toString());
+    // if (!!payload.fileName && !!payload.data) {
+    //     fs.writeFileSync('sub-' + payload.fileName, Buffer.from(payload.data, 'base64'));
+    // }
+    console.log('Got message: ', message.toString(), ' from topic ', topic);
     // client.end();
 });
